@@ -69,15 +69,20 @@ const Clients: React.FC = () => {
   };
 
   return (
-    <section className="my-20 animate-zoomIn text-center relative">
+    <section className="my-20 text-center relative">
       {/* Heading */}
-      <h1 className="py-8 text-5xl font-bold">Our Clients</h1>
+      <div className="tech-mono text-blue-400 text-sm font-semibold tracking-wider mb-4">
+        TRUSTED PARTNERSHIPS
+      </div>
+      <h1 className="py-8 text-4xl lg:text-5xl font-black text-white">
+        Industry <span className="gradient-text">Leaders</span>
+      </h1>
 
       {/* Scroll Buttons */}
       <div className="absolute left-[-20px] bottom-20 transform -translate-y-1/2 z-10">
         <div
           onClick={handleScrollLeft}
-          className="rounded-full p-2 cursor-pointer"
+          className="glass-morphic rounded-full p-3 cursor-pointer border border-white/20 hover:border-white/40 transition-all duration-300"
           aria-label="Scroll Left"
         >
           <svg
@@ -86,7 +91,7 @@ const Clients: React.FC = () => {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-6 h-6"
+            className="w-6 h-6 text-white"
           >
             <path
               strokeLinecap="round"
@@ -100,7 +105,7 @@ const Clients: React.FC = () => {
       <div className="absolute right-[-10px] bottom-20 transform -translate-y-1/2 z-10">
         <div
           onClick={handleScrollRight}
-          className="cursor-pointer rounded-full p-2"
+          className="glass-morphic rounded-full p-3 cursor-pointer border border-white/20 hover:border-white/40 transition-all duration-300"
           aria-label="Scroll Right"
         >
           <svg
@@ -109,7 +114,7 @@ const Clients: React.FC = () => {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-6 h-6"
+            className="w-6 h-6 text-white"
           >
             <path
               strokeLinecap="round"
@@ -135,7 +140,9 @@ const Clients: React.FC = () => {
       >
         {clientData.map((client, index) => (
           <div key={index} className="flex-shrink-0 w-64">
-            <ClientsCard img={client.img} />
+            <div className="glass-morphic rounded-xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300">
+              <ClientsCard img={client.img} />
+            </div>
           </div>
         ))}
       </div>

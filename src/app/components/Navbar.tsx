@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import ModeToggle from "./ModeToggle";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -23,7 +22,7 @@ const DropdownList = () => {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-6 h-6 cursor-pointer"
+            className="w-6 h-6 cursor-pointer text-white"
           >
             <path
               strokeLinecap="round"
@@ -33,24 +32,29 @@ const DropdownList = () => {
           </svg>
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-40 animate-zoomIn">
+      <DropdownMenuContent className="glass-morphic border border-white/20 bg-black/50 backdrop-blur-xl">
         <DropdownMenuItem asChild>
-          <Link href="/">Home</Link>
+          <Link href="/" className="text-white hover:text-blue-400">Home</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/service">Services</Link>
+          <Link href="/service" className="text-white hover:text-blue-400">Services</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/about">About Us</Link>
+          <Link href="/about" className="text-white hover:text-blue-400">About Us</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/contact">Contact Us</Link>
+          <Link href="/contact" className="text-white hover:text-blue-400">Contact Us</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/blog" className="text-white hover:text-blue-400">Blog</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/career" className="text-white hover:text-blue-400">Career</Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 };
-
 
 const MenubarDesktop = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -60,56 +64,64 @@ const MenubarDesktop = () => {
   };
 
   return (
-    <div className="hidden animate-zoomIn md:flex gap-10 p-2">
+    <div className="hidden md:flex gap-8 items-center">
       <Link
         href="/"
-        className="font-bold transition-colors duration-300 hover:text-blue-500 dark:hover:text-blue-400"
+        className="text-white font-semibold transition-all duration-300 hover:text-blue-400 tech-mono text-sm"
       >
-        Home
+        HOME
       </Link>
       <Link
         href="/service"
-        className="font-bold transition-colors duration-300 hover:text-blue-500 dark:hover:text-blue-400"
+        className="text-white font-semibold transition-all duration-300 hover:text-blue-400 tech-mono text-sm"
       >
-        Services
+        SERVICES
       </Link>
       <Link
         href="/about"
-        className="font-bold transition-colors duration-300 hover:text-blue-500 dark:hover:text-blue-400"
+        className="text-white font-semibold transition-all duration-300 hover:text-blue-400 tech-mono text-sm"
       >
-        About Us
+        ABOUT
       </Link>
       <Link
         href="/contact"
-        className="font-bold transition-colors duration-300 hover:text-blue-500 dark:hover:text-blue-400"
+        className="text-white font-semibold transition-all duration-300 hover:text-blue-400 tech-mono text-sm"
       >
-        Contact Us
+        CONTACT
+      </Link>
+      <Link
+        href="/blog"
+        className="text-white font-semibold transition-all duration-300 hover:text-blue-400 tech-mono text-sm"
+      >
+        BLOG
+      </Link>
+      <Link
+        href="/career"
+        className="text-white font-semibold transition-all duration-300 hover:text-blue-400 tech-mono text-sm"
+      >
+        CAREER
       </Link>
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className="cursor-pointer font-bold transition-colors duration-300 hover:text-blue-500 dark:hover:text-blue-400"
+        className="cursor-pointer bg-gradient-to-r from-blue-500 to-orange-500 hover:from-blue-600 hover:to-orange-600 text-white font-bold px-6 py-2 rounded-lg transition-all duration-300 tech-mono text-sm"
       >
-        Enquiry
+        ENQUIRY
       </div>
       <BookACall label="Enquiry Form" isOpen={isOpen} onClose={onClose} />
     </div>
   );
 };
 
-
 const Navbar = () => {
   return (
-    <div
-      className={`bg-white dark:bg-gray-900 dark:text-white h-20 w-full fixed px-5 md:px-10 flex justify-between items-center shadow z-50`}
-    >
+    <div className="glass-morphic h-20 w-full fixed px-5 md:px-10 flex justify-between items-center z-50 border-b border-white/10">
       {/* Logo Section */}
       <Logo />
       <MenubarDesktop />
 
-      {/* Mobile Menu and Additional Controls */}
+      {/* Mobile Menu */}
       <div className="flex items-center gap-5">
         <DropdownList />
-        <ModeToggle />
       </div>
     </div>
   );

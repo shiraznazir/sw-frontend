@@ -1,16 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useForm, FormProvider, useFormContext } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { sendEnquiry } from "@/apis";
 import { toast } from 'react-toastify';
-import Spinner from "@/components/ui/spinner";
 
 const formSchema = z.object({
   name: z
