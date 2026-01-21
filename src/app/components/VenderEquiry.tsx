@@ -16,10 +16,7 @@ const VenderEquiry = ({
     <div className="flex justify-center items-center animate-slideIn">
       <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
         <DialogTitle></DialogTitle>
-        <DialogContent className="sm:max-w-[425px] max-h-[70vh] overflow-y-auto">
-          <h2 className="text-2xl ml-14 mt-5 fixed font-bold">
-            Vendor Enquiry Form
-          </h2>
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-hidden bg-gradient-to-br from-slate-900/95 to-slate-800/95 backdrop-blur-xl border border-white/10 rounded-2xl">
           <ContactForm type="vender" onClose={onClose} />
         </DialogContent>
       </Dialog>

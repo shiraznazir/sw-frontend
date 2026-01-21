@@ -5,160 +5,237 @@ import { motion, AnimatePresence } from "framer-motion";
 import { sendEnquiry } from "@/apis";
 import { toast } from 'react-toastify';
 
-const formSchema = z.object({
-  name: z
-    .string()
-    .min(2, { message: "Name must be at least 2 characters long." })
-    .max(50, { message: "Name must not exceed 50 characters." }),
-  email: z.string().email({ message: "Invalid email address." }),
-  mobileNumber: z
-    .string()
-    .regex(/^\d{10}$/, { message: "Mobile number must be 10 digits." })
-    .nonempty({ message: "Mobile number is required." }),
-  address: z.string().nonempty({ message: "Address is required." }),
-  message: z.string().nonempty({ message: "Message is required." }),
-  pincode: z
-    .string()
-    .regex(/^\d{6}$/, { message: "Pincode must be 6 digits." })
-    .nonempty({ message: "Pincode is required." }),
-  type: z.string().nonempty({ message: "Type is required." }),
-});
-
-type FormData = z.infer<typeof formSchema>;
-
-const InputField = ({
-  name,
-  label,
-  type,
-}: {
-  name: keyof FormData;
-  label: string;
-  type?: string;
-}) => {
-  const { getFieldState, register, formState, reset } =
-    useFormContext<FormData>();
-  const { error } = getFieldState(name, formState);
-
-  useEffect(() => {
-    if (error) {
-      toast.error(error.message);
-    }
-  }, [error, toast]);
-
-  return (
-    <div className="form-item mb-4">
-      <Label htmlFor={name} className="block text-sm font-medium mb-1">
-        {label}
-      </Label>
-      <Input {...register(name)} id={name} placeholder={label} />
-      {error && <p className="text-sm text-red-600 mt-1">{error.message}</p>}
-    </div>
-  );
-};
-
-const ContactForm = ({
-  onClose,
-  type,
-}: {
+interface FormData {
+  name: string;
+  email: string;
+  mobileNumber: string;
+  address: string;
+  message: string;
+  pincode: string;
   type: string;
+}
+
+interface ContactFormProps {
   onClose?: () => void;
-}) => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const methods = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      mobileNumber: "",
-      address: "",
-      pincode: "",
-      message: "",
-      type: type,
-    },
+  type: string;
+}
+
+const ContactForm: React.FC<ContactFormProps> = ({ onClose, type }) => {
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    email: "",
+    mobileNumber: "",
+    address: "",
+    pincode: "",
+    message: "",
+    type: type,
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const onSubmit = async (data: FormData) => {
-    // Convert data into FormData
-    const formData = new FormData();
-    formData.append("name", data.name);
-    formData.append("email", data.email);
-    formData.append("mobileNumber", data.mobileNumber);
-    formData.append("pincode", data.pincode);
-    formData.append("message", data.message);
-    formData.append("address", data.address);
-    formData.append("type", data.type);
-
-    methods.reset();
-
-    try {
-      setIsLoading(true);
-      // Send POST request with FormData
-      const response = await sendEnquiry(formData);
-      if (response.status) {
-        toast.success("Your enquiry form is filled successfully");
-      } else {
-        setIsLoading(false);
-        toast.error("Form is not filled successfully");
-      }
-
-      setTimeout(() => {
-        onClose && onClose();
-        setIsLoading(false);
-      }, 5000);
-    } catch (error) {
-      setIsLoading(false);
-      toast.error("Form is not filled successfully");
-      console.error("Form is not filled successfully", error);
-      setTimeout(() => {
-        onClose && onClose();
-      }, 5000);
+  const validateField = (name: string, value: string): string | null => {
+    switch (name) {
+      case "name":
+        if (!value.trim()) return "Name is required";
+        if (value.length < 2) return "Name must be at least 2 characters";
+        if (value.length > 50) return "Name must not exceed 50 characters";
+        return null;
+      case "email":
+        if (!value.trim()) return "Email is required";
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) return "Invalid email address";
+        return null;
+      case "mobileNumber":
+        if (!value.trim()) return "Mobile number is required";
+        const phoneRegex = /^\d{10}$/;
+        if (!phoneRegex.test(value)) return "Mobile number must be 10 digits";
+        return null;
+      case "pincode":
+        if (!value.trim()) return "Pincode is required";
+        const pincodeRegex = /^\d{6}$/;
+        if (!pincodeRegex.test(value)) return "Pincode must be 6 digits";
+        return null;
+      case "address":
+        if (!value.trim()) return "Address is required";
+        return null;
+      case "message":
+        if (!value.trim()) return "Message is required";
+        return null;
+      default:
+        return null;
     }
   };
 
-  return (
-    <FormProvider {...methods}>
-      <div className="px-10 py-10 overflow-y-auto">
-        <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
-          <InputField name="name" label="Full Name" />
-          <InputField name="email" label="Email Address" />
-          <InputField name="mobileNumber" label="Mobile Number" />
-          <InputField name="pincode" label="Pincode" />
-          <div className="form-item mb-4">
-            <Label htmlFor="address" className="block text-sm font-medium mb-1">
-              Address
-            </Label>
-            <Textarea
-              {...methods.register("address")}
-              id="address"
-              placeholder="Address"
+  const handleInputChange = (name: string, value: string) => {
+    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: "" }));
+    }
+
+    // Real-time validation
+    const error = validateField(name, value);
+    if (error) {
+      setErrors(prev => ({ ...prev, [name]: error }));
+    }
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+    
+    Object.keys(formData).forEach(key => {
+      if (key !== "type") {
+        const error = validateField(key, formData[key as keyof FormData]);
+        if (error) {
+          newErrors[key] = error;
+        }
+      }
+    });
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+    
+    try {
+      // Convert data into FormData
+      const submitData = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        submitData.append(key, value);
+      });
+
+      const response = await sendEnquiry(submitData);
+      
+      if (response.status) {
+        toast.success("Your enquiry form is filled successfully");
+        // Reset form on success
+        setFormData({
+          name: "",
+          email: "",
+          mobileNumber: "",
+          address: "",
+          pincode: "",
+          message: "",
+          type: type,
+        });
+        setTimeout(() => {
+          onClose && onClose();
+        }, 2000);
+      } else {
+        toast.error("Form is not filled successfully");
+      }
+    } catch (error) {
+      toast.error("Form is not filled successfully");
+      console.error("Form submission error:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const renderField = (name: keyof FormData, label: string, type: string = "text", isTextarea: boolean = false) => {
+    const value = formData[name];
+    const error = errors[name];
+
+    return (
+      <div className="form-group">
+        <div className="relative">
+          {isTextarea ? (
+            <textarea
+              className="form-textarea"
+              placeholder=" "
+              value={value}
+              onChange={(e) => handleInputChange(name, e.target.value)}
+              required
+              rows={4}
             />
-            {methods.formState.errors.address && (
-              <p className="text-sm text-red-600 mt-1">
-                {methods.formState.errors.address.message}
-              </p>
-            )}
-          </div>
-          <div className="form-item mb-4">
-            <Label htmlFor="message" className="block text-sm font-medium mb-1">
-              Your Message
-            </Label>
-            <Textarea
-              {...methods.register("message")}
-              id="message"
-              placeholder="Type your message here."
+          ) : (
+            <input
+              type={type}
+              className="form-input"
+              placeholder=" "
+              value={value}
+              onChange={(e) => handleInputChange(name, e.target.value)}
+              required
             />
-            {methods.formState.errors.message && (
-              <p className="text-sm text-red-600 mt-1">
-                {methods.formState.errors.message.message}
-              </p>
-            )}
-          </div>
-          <Button type="submit" className="mt-4" disabled={isLoading}>
-            {isLoading ? <Spinner size="lg" /> : "Submit"}
-          </Button>
-        </form>
+          )}
+          <label className="form-label">{label}</label>
+        </div>
+        <AnimatePresence>
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="form-error show"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {error}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-    </FormProvider>
+    );
+  };
+
+  return (
+    <div className="modern-form px-6 py-8">
+      {/* Form Header */}
+      <div className="text-center mb-8">
+        <h2 className="text-2xl font-bold text-white mb-2">
+          {type === "customer" ? "Book a Service Call" : "Partner with Us"}
+        </h2>
+        <p className="text-white/70">
+          {type === "customer" 
+            ? "Get expert HVAC service with 24/7 emergency support" 
+            : "Join our network of certified service providers"
+          }
+        </p>
+      </div>
+
+      {/* Form Content */}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {renderField("name", "Full Name")}
+          {renderField("email", "Email Address", "email")}
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {renderField("mobileNumber", "Mobile Number", "tel")}
+          {renderField("pincode", "Pincode")}
+        </div>
+        
+        {renderField("address", "Address", "text", true)}
+        {renderField("message", "Your Message", "text", true)}
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="form-button w-full"
+        >
+          {isSubmitting ? (
+            <div className="flex items-center justify-center gap-2">
+              <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+              Submitting...
+            </div>
+          ) : (
+            "Submit Enquiry"
+          )}
+        </button>
+      </form>
+    </div>
   );
 };
 

@@ -2,9 +2,7 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import ThermalPageWrapper from "../components/ThermalPageWrapper";
-import Spinner from "../components/Spinner";
 
 interface FormData {
   name: string;
@@ -280,9 +278,9 @@ const CareerPage = () => {
                 </ul>
               </div>
 
-              <Button className="w-full bg-gradient-to-r from-blue-500 to-orange-500 hover:from-blue-600 hover:to-orange-600 text-white font-bold">
+              <button className="w-full bg-gradient-to-r from-blue-500 to-orange-500 hover:from-blue-600 hover:to-orange-600 text-white font-bold py-3 rounded-lg transition-colors">
                 Apply for this Position
-              </Button>
+              </button>
             </motion.div>
           ))}
         </div>
@@ -307,94 +305,128 @@ const CareerPage = () => {
 
           <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div>
-                <label className="block text-white font-semibold mb-2">Full Name *</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={form.name}
-                  onChange={handleChange}
-                  className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:border-blue-400"
-                  required
-                />
+              <div className="form-group">
+                <div className="relative">
+                  <input
+                    type="text"
+                    name="name"
+                    className="form-input"
+                    placeholder=" "
+                    value={form.name}
+                    onChange={handleChange}
+                    required
+                  />
+                  <label className="form-label">Full Name</label>
+                </div>
               </div>
-              <div>
-                <label className="block text-white font-semibold mb-2">Email Address *</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:border-blue-400"
-                  required
-                />
+              <div className="form-group">
+                <div className="relative">
+                  <input
+                    type="email"
+                    name="email"
+                    className="form-input"
+                    placeholder=" "
+                    value={form.email}
+                    onChange={handleChange}
+                    required
+                  />
+                  <label className="form-label">Email Address</label>
+                </div>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div>
-                <label className="block text-white font-semibold mb-2">Phone Number *</label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={form.phone}
-                  onChange={handleChange}
-                  className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:border-blue-400"
-                  required
-                />
+              <div className="form-group">
+                <div className="relative">
+                  <input
+                    type="tel"
+                    name="phone"
+                    className="form-input"
+                    placeholder=" "
+                    value={form.phone}
+                    onChange={handleChange}
+                    required
+                  />
+                  <label className="form-label">Phone Number</label>
+                </div>
               </div>
-              <div>
-                <label className="block text-white font-semibold mb-2">Years of Experience *</label>
-                <input
-                  type="text"
-                  name="experience"
-                  value={form.experience}
-                  onChange={handleChange}
-                  placeholder="e.g., 5 years"
-                  className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:border-blue-400"
-                  required
-                />
+              <div className="form-group">
+                <div className="relative">
+                  <input
+                    type="text"
+                    name="experience"
+                    className="form-input"
+                    placeholder=" "
+                    value={form.experience}
+                    onChange={handleChange}
+                    required
+                  />
+                  <label className="form-label">Years of Experience</label>
+                </div>
               </div>
             </div>
 
             <div className="mb-6">
-              <label className="block text-white font-semibold mb-2">Position of Interest *</label>
-              <select
-                name="position"
-                value={form.position}
-                onChange={handleChange}
-                className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-400"
-                required
-              >
-                <option value="HVAC Technician">HVAC Technician</option>
-                <option value="Senior HVAC Engineer">Senior HVAC Engineer</option>
-                <option value="Thermal Efficiency Specialist">Thermal Efficiency Specialist</option>
-                <option value="Emergency Response Technician">Emergency Response Technician</option>
-                <option value="AMC Service Coordinator">AMC Service Coordinator</option>
-                <option value="Other">Other</option>
-              </select>
+              <div className="form-group">
+                <div className="relative">
+                  <select
+                    name="position"
+                    className="form-select"
+                    value={form.position}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="HVAC Technician">HVAC Technician</option>
+                    <option value="Senior HVAC Engineer">Senior HVAC Engineer</option>
+                    <option value="Thermal Efficiency Specialist">Thermal Efficiency Specialist</option>
+                    <option value="Emergency Response Technician">Emergency Response Technician</option>
+                    <option value="AMC Service Coordinator">AMC Service Coordinator</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <label className="form-label">Position of Interest</label>
+                  <div className="select-arrow">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className="mb-8">
-              <label className="block text-white font-semibold mb-2">Cover Letter / Additional Information</label>
-              <textarea
-                name="message"
-                value={form.message}
-                onChange={handleChange}
-                rows={6}
-                placeholder="Tell us about your experience, skills, and why you want to join Service Walah..."
-                className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:border-blue-400 resize-none"
-              />
+              <div className="form-group">
+                <div className="relative">
+                  <textarea
+                    name="message"
+                    className="form-textarea"
+                    placeholder=" "
+                    value={form.message}
+                    onChange={handleChange}
+                    rows={6}
+                  />
+                  <label className="form-label">Cover Letter / Additional Information</label>
+                </div>
+              </div>
             </div>
 
             <div className="text-center">
-              <Button 
+              <button 
                 type="submit" 
                 disabled={isLoading}
-                className="bg-gradient-to-r from-blue-500 to-orange-500 hover:from-blue-600 hover:to-orange-600 text-white font-bold px-12 py-4 text-lg rounded-xl"
+                className="form-button px-12 py-4 text-lg rounded-xl"
               >
-                {isLoading ? <Spinner size="sm" /> : "Submit Application"}
-              </Button>
+                {isLoading ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    Submitting...
+                  </div>
+                ) : (
+                  "Submit Application"
+                )}
+              </button>
             </div>
           </form>
         </div>
